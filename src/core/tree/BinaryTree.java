@@ -1,11 +1,12 @@
 package core.tree;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
  * Created by mma on 6/4/2016.
  */
-public class BinaryTree {
+public class BinaryTree implements Serializable{
     private Node root ;
 
     public BinaryTree(){
@@ -50,6 +51,10 @@ public class BinaryTree {
 
         public CharSequence getLabel(){
             return label ;
+        }
+
+        public int getNum(){
+            return number ;
         }
     }
 

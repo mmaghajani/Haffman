@@ -12,63 +12,100 @@ import java.util.HashMap;
  */
 public class HaffmanHandler {
     private File decodedFile;
-    private File encodedFile ;
+    private File encodedFile;
     private HashMap<Character, Integer> numOfChars;
     private HashMap<Character, String> codes;
+    private BinaryTree treeOfFile;
 
     public HaffmanHandler(File decodedFile) {
-        codes = new HashMap<>() ;
+        codes = new HashMap<>();
         this.decodedFile = decodedFile;
         numOfChars = getNumOfCharsFromContent(getContentFromFile(decodedFile));
-        BinaryTree treeOfFile = BinaryTree.createHaffmanTree(numOfChars);
+        treeOfFile = BinaryTree.createHaffmanTree(numOfChars);
         generateCodesForChars(treeOfFile);
     }
 
-    public File encode() {
-        if (decodedFile == null) {
+    public HaffmanHandler(File encodedFile, File tree) {
+        codes = new HashMap<>();
+        treeOfFile = readTreeFromFile(tree);
+        generateCodesForChars(treeOfFile);
+        this.encodedFile = encodedFile;
+        setNumOfCharsFromTree();
+    }
+
+    public void setDecodedFile(File decodedFile){
+        this.decodedFile = decodedFile;
+        numOfChars = getNumOfCharsFromContent(getContentFromFile(decodedFile));
+        treeOfFile = BinaryTree.createHaffmanTree(numOfChars);
+        generateCodesForChars(treeOfFile);
+    }
+
+    public void setEncodedFile(File encodedFile, File tree){
+        treeOfFile = readTreeFromFile(tree);
+        generateCodesForChars(treeOfFile);
+        this.encodedFile = encodedFile;
+        setNumOfCharsFromTree();
+    }
+
+    private BinaryTree readTreeFromFile(File tree) {
+        try {
+            InputStream is = new FileInputStream(tree);
+            ObjectInputStream ois = new ObjectInputStream(is);
             try {
-                throw new FileNotFoundException("Please select a file for encoding");
-            } catch (FileNotFoundException e) {
+                return (BinaryTree) ois.readObject();
+            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-            return null;
+        return null;
+    }
+
+    public File encode() throws FileNotFoundException {
+        if (decodedFile == null) {
+            throw new FileNotFoundException("Please select a file for encoding");
         } else {
             return convertToHaffmanCode();
         }
     }
 
-    public File decode(){
-        if( decodedFile != null ){
-            return decodedFile ;
-        }else{
-            String content = getContentFromFile(encodedFile) ;
-            String temp = "" ;
-            try {
-                FileWriter writer = new FileWriter(decodedFile) ;
-                for( int i = 0 ; i < content.length() ; i++ ){
-                    temp += content.charAt(i) ;
-                    if( codes.values().contains(temp)){
-                        for( char c : codes.keySet() ){
-                            if( codes.get(c).equals(temp) ){
-                                writer.write(c);
-                                temp = "" ;
+    public File decode() throws FileNotFoundException {
+        if (codes == null) {
+            throw new FileNotFoundException("No tree file founded");
+        } else {
+            if (decodedFile != null) {
+                return decodedFile;
+            } else {
+                String content = getContentFromFile(encodedFile);
+                String temp = "";
+                try {
+                    FileWriter writer = new FileWriter(decodedFile);
+                    for (int i = 0; i < content.length(); i++) {
+                        temp += content.charAt(i);
+                        if (codes.values().contains(temp)) {
+                            for (char c : codes.keySet()) {
+                                if (codes.get(c).equals(temp)) {
+                                    writer.write(c);
+                                    temp = "";
+                                }
                             }
                         }
                     }
+
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
 
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+                return decodedFile;
             }
-
-            return decodedFile ;
         }
     }
 
     private File convertToHaffmanCode() {
-        if( encodedFile == null ) {
+        if (encodedFile == null) {
             String s = "HaffmanEncoded";
             s += decodedFile.getName();
             s += ".txt";
@@ -90,10 +127,23 @@ public class HaffmanHandler {
                     e.printStackTrace();
                 }
 
+                String t = "HaffmanTree";
+                t += decodedFile.getName();
+                t += ".txt";
+                File tree = new File("../encodedFile/" + t);
+                try {
+                    OutputStream os = new FileOutputStream(tree);
+                    ObjectOutputStream oos = new ObjectOutputStream(os);
+                    oos.writeObject(this.treeOfFile);
+                    oos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 return encodedFile;
             }
-        }else
-            return encodedFile ;
+        } else
+            return encodedFile;
     }
 
     private void generateCodesForChars(BinaryTree treeOfFile) {
@@ -107,6 +157,16 @@ public class HaffmanHandler {
         } else {
             dfs(root.getLeft(), code + "0");
             dfs(root.getRight(), code + "1");
+        }
+    }
+
+    private void dfs(BinaryTree.Node root) {
+        if (root.getLeft() == null) {
+            char c = root.getLabel().charAt(0);
+            numOfChars.put(c, root.getNum());
+        } else {
+            dfs(root.getLeft());
+            dfs(root.getRight());
         }
     }
 
@@ -137,5 +197,9 @@ public class HaffmanHandler {
         }
 
         return content;
+    }
+
+    public void setNumOfCharsFromTree() {
+        dfs(treeOfFile.getRoot());
     }
 }
