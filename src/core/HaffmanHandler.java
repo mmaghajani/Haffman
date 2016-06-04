@@ -11,20 +11,21 @@ import java.util.HashMap;
  * Created by mma on 6/4/2016.
  */
 public class HaffmanHandler {
-    private File file;
+    private File decodedFile;
+    private File encodedFile ;
     private HashMap<Character, Integer> numOfChars;
     private HashMap<Character, String> codes;
 
-    public HaffmanHandler(File file) {
+    public HaffmanHandler(File decodedFile) {
         codes = new HashMap<>() ;
-        this.file = file;
-        numOfChars = getNumOfCharsFromContent(getContentFromFile());
+        this.decodedFile = decodedFile;
+        numOfChars = getNumOfCharsFromContent(getContentFromFile(decodedFile));
         BinaryTree treeOfFile = BinaryTree.createHaffmanTree(numOfChars);
         generateCodesForChars(treeOfFile);
     }
 
     public File encode() {
-        if (file == null) {
+        if (decodedFile == null) {
             try {
                 throw new FileNotFoundException("Please select a file for encoding");
             } catch (FileNotFoundException e) {
@@ -37,30 +38,62 @@ public class HaffmanHandler {
         }
     }
 
-    private File convertToHaffmanCode() {
-        String s = "HaffmanEncoded";
-        s += file.getName();
-        s += ".txt";
-        File encodedFile = new File("../encodedFile/" + s);
-        if (encodedFile.exists()) {
-            return encodedFile;
-        } else {
-            String content = getContentFromFile();
-            String extension = "";
-            for (int i = 0; i < content.length(); i++) {
-                extension += codes.get(content.charAt(i));
-            }
-
+    public File decode(){
+        if( decodedFile != null ){
+            return decodedFile ;
+        }else{
+            String content = getContentFromFile(encodedFile) ;
+            String temp = "" ;
             try {
-                FileWriter writer = new FileWriter(encodedFile);
-                writer.write(extension);
+                FileWriter writer = new FileWriter(decodedFile) ;
+                for( int i = 0 ; i < content.length() ; i++ ){
+                    temp += content.charAt(i) ;
+                    if( codes.values().contains(temp)){
+                        for( char c : codes.keySet() ){
+                            if( codes.get(c).equals(temp) ){
+                                writer.write(c);
+                                temp = "" ;
+                            }
+                        }
+                    }
+                }
+
                 writer.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            return encodedFile;
+            return decodedFile ;
         }
+    }
+
+    private File convertToHaffmanCode() {
+        if( encodedFile == null ) {
+            String s = "HaffmanEncoded";
+            s += decodedFile.getName();
+            s += ".txt";
+            encodedFile = new File("../encodedFile/" + s);
+            if (encodedFile.exists()) {
+                return encodedFile;
+            } else {
+                String content = getContentFromFile(decodedFile);
+                String extension = "";
+                for (int i = 0; i < content.length(); i++) {
+                    extension += codes.get(content.charAt(i));
+                }
+
+                try {
+                    FileWriter writer = new FileWriter(encodedFile);
+                    writer.write(extension);
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                return encodedFile;
+            }
+        }else
+            return encodedFile ;
     }
 
     private void generateCodesForChars(BinaryTree treeOfFile) {
@@ -93,7 +126,7 @@ public class HaffmanHandler {
         return numOfChars;
     }
 
-    private String getContentFromFile() {
+    private String getContentFromFile(File file) {
         String content = "";
         try {
             for (String string : Files.readAllLines(Paths.get(file.getPath()))) {
