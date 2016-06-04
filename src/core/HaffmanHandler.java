@@ -20,9 +20,11 @@ public class HaffmanHandler {
     public HaffmanHandler(File decodedFile) {
         codes = new HashMap<>();
         this.decodedFile = decodedFile;
-        numOfChars = getNumOfCharsFromContent(getContentFromFile(decodedFile));
-        treeOfFile = BinaryTree.createHaffmanTree(numOfChars);
+        numOfChars = getNumOfCharsFromContent(getContentFromFile(decodedFile)) ;
+        treeOfFile = new BinaryTree() ;
+        treeOfFile = treeOfFile.createHaffmanTree(numOfChars);
         generateCodesForChars(treeOfFile);
+        System.out.println(codes) ;
     }
 
     public HaffmanHandler(File encodedFile, File tree) {
@@ -30,13 +32,15 @@ public class HaffmanHandler {
         treeOfFile = readTreeFromFile(tree);
         generateCodesForChars(treeOfFile);
         this.encodedFile = encodedFile;
+        numOfChars = new HashMap<>() ;
         setNumOfCharsFromTree();
     }
 
     public void setDecodedFile(File decodedFile){
         this.decodedFile = decodedFile;
         numOfChars = getNumOfCharsFromContent(getContentFromFile(decodedFile));
-        treeOfFile = BinaryTree.createHaffmanTree(numOfChars);
+        treeOfFile = new BinaryTree() ;
+        treeOfFile = treeOfFile.createHaffmanTree(numOfChars);
         generateCodesForChars(treeOfFile);
     }
 
@@ -44,6 +48,7 @@ public class HaffmanHandler {
         treeOfFile = readTreeFromFile(tree);
         generateCodesForChars(treeOfFile);
         this.encodedFile = encodedFile;
+        numOfChars = new HashMap<>() ;
         setNumOfCharsFromTree();
     }
 
@@ -78,6 +83,9 @@ public class HaffmanHandler {
             if (decodedFile != null) {
                 return decodedFile;
             } else {
+                String s = "HaffmanDecoded";
+                s += encodedFile.getName();
+                decodedFile = new File("decodedFile/" + s);
                 String content = getContentFromFile(encodedFile);
                 String temp = "";
                 try {
@@ -108,11 +116,15 @@ public class HaffmanHandler {
         if (encodedFile == null) {
             String s = "HaffmanEncoded";
             s += decodedFile.getName();
-            s += ".txt";
-            encodedFile = new File("../encodedFile/" + s);
+            encodedFile = new File("encodedFile/" + s);
             if (encodedFile.exists()) {
                 return encodedFile;
             } else {
+                try {
+                    encodedFile.createNewFile() ;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 String content = getContentFromFile(decodedFile);
                 String extension = "";
                 for (int i = 0; i < content.length(); i++) {
@@ -129,8 +141,7 @@ public class HaffmanHandler {
 
                 String t = "HaffmanTree";
                 t += decodedFile.getName();
-                t += ".txt";
-                File tree = new File("../encodedFile/" + t);
+                File tree = new File("encodedFile/" + t);
                 try {
                     OutputStream os = new FileOutputStream(tree);
                     ObjectOutputStream oos = new ObjectOutputStream(os);
