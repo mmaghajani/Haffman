@@ -106,15 +106,56 @@ public class Frame extends JFrame {
         encode.setBackground(Color.MAGENTA);
         encode.setFont(new Font("/fonts/SegeoPrint", Font.BOLD, 18));
         encode.setForeground(Color.WHITE);
-//        encode.addActionListener(new ActionListener() {
-//
-//            @Override
-//            public void actionPerformed(ActionEvent arg0) {
-//                // TODO Auto-generated method stub
-//                EnrollmentPage enrollmentPage = new EnrollmentPage() ;
-//                //getContentPane().add( enrollmentPage ) ;
-//            }
-//        });
+        encode.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            // TODO Auto-generated method stub
+            try {
+                //	JOptionPane.showMessageDialog(null, "Entering...") ;
+                Thread.sleep(800);
+                Frame.this.setVisible(false);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+                UIManager
+                        .setLookAndFeel("com.jtattoo.plaf.aluminium.AluminiumLookAndFeel");
+            } catch (ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (UnsupportedLookAndFeelException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            EncodePanel mp = new EncodePanel(Frame.this);
+            Runnable good = () -> {
+                while (true) {
+                    if (mp == null)
+                        setVisible(true);
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            };
+
+            Thread th = new Thread(good);
+            th.setPriority(10);
+            th.start();
+        }
+    });
 
     }
 

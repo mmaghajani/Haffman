@@ -68,11 +68,11 @@ public class HaffmanHandler {
         return null;
     }
 
-    public File encode() throws FileNotFoundException {
+    public File encode(String pathForFile , String pathForTree) throws FileNotFoundException {
         if (decodedFile == null) {
             throw new FileNotFoundException("Please select a file for encoding");
         } else {
-            return convertToHaffmanCode();
+            return convertToHaffmanCode(pathForFile , pathForTree);
         }
     }
 
@@ -112,11 +112,9 @@ public class HaffmanHandler {
         }
     }
 
-    private File convertToHaffmanCode() {
+    private File convertToHaffmanCode(String pathForFile , String pathForTree) {
         if (encodedFile == null) {
-            String s = "HaffmanEncoded";
-            s += decodedFile.getName();
-            encodedFile = new File("encodedFile/" + s);
+            encodedFile = new File(pathForFile);
             if (encodedFile.exists()) {
                 return encodedFile;
             } else {
@@ -139,9 +137,7 @@ public class HaffmanHandler {
                     e.printStackTrace();
                 }
 
-                String t = "HaffmanTree";
-                t += decodedFile.getName();
-                File tree = new File("encodedFile/" + t);
+                File tree = new File(pathForTree);
                 try {
                     OutputStream os = new FileOutputStream(tree);
                     ObjectOutputStream oos = new ObjectOutputStream(os);

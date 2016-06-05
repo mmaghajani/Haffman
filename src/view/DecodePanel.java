@@ -111,6 +111,9 @@ public class DecodePanel extends JFrame {
                             writer.write(line);
                         }
                         writer.close();
+
+                        parent.setVisible(true);
+                        dispose();
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
@@ -188,7 +191,6 @@ public class DecodePanel extends JFrame {
         getContentPane().add(browsTree);
         getContentPane().add(filePathTree) ;
         getContentPane().add(descriptionTree) ;
-//        getContentPane().add(encode);
         getContentPane().add(decode) ;
 
     }
