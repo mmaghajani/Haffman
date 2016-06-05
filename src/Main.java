@@ -1,4 +1,5 @@
 import core.HaffmanHandler;
+import view.Frame;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,13 +10,14 @@ import java.io.FileNotFoundException;
 public class Main {
 
     public static void main(String args[]){
-        File file = new File("encodedFile/HaffmanEncodedtest.txt") ;
-        File file1 = new File("encodedFile/HaffmanTreetest.txt") ;
-        HaffmanHandler haffmanHandler = new HaffmanHandler(file , file1) ;
-        try {
-            haffmanHandler.decode() ;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        Frame frame = new Frame() ;
+//        File file = new File("encodedFile/HaffmanEncodedtest.txt") ;
+//        File file1 = new File("encodedFile/HaffmanTreetest.txt") ;
+//        HaffmanHandler haffmanHandler = new HaffmanHandler(file , file1) ;
+//        try {
+//            haffmanHandler.decode() ;
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
     }
 }
