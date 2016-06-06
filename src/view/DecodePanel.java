@@ -22,18 +22,18 @@ public class DecodePanel extends JFrame {
     private JButton browsTree;
     private JButton decode;
     private JLabel title;
-    private JTextField filePath ;
-    private JTextField filePathTree ;
-    private JLabel description ;
-    private JLabel descriptionTree ;
-    private Frame parent ;
-    private File selectedFile ;
-    private File selectedTreeFile ;
+    private JTextField filePath;
+    private JTextField filePathTree;
+    private JLabel description;
+    private JLabel descriptionTree;
+    private Frame parent;
+    private File selectedFile;
+    private File selectedTreeFile;
 
     public DecodePanel(Frame parent) {
         super();
 
-        this.parent = parent ;
+        this.parent = parent;
 
         initialize();
 
@@ -45,33 +45,33 @@ public class DecodePanel extends JFrame {
 
 //        setExitButton() ;
 
-        AddComponentsToFrame() ;
+        AddComponentsToFrame();
 
         setVisible(true);
     }
 
     private void setTreePanel() {
         browsTree = new JButton("Brows");
-        browsTree.setLocation(width *5 / 7, height * 6 / 13);
+        browsTree.setLocation(width * 5 / 7, height * 6 / 13);
         browsTree.setSize(width / 4, height / 8);
         browsTree.setBackground(Color.LIGHT_GRAY);
         browsTree.setFont(new Font("/fonts/SegeoPrint", Font.BOLD, 12));
         browsTree.setForeground(Color.WHITE);
 
-        filePathTree = new JTextField() ;
-        filePathTree.setLocation(width / 20 , height * 6 / 13);
-        filePathTree.setSize(width * 3 / 5 , height / 8);
+        filePathTree = new JTextField();
+        filePathTree.setLocation(width / 20, height * 6 / 13);
+        filePathTree.setSize(width * 3 / 5, height / 8);
 
-        descriptionTree = new JLabel("Please select a text file for tree of file") ;
-        descriptionTree.setLocation(width  / 20, height * 5 / 14);
-        descriptionTree.setSize(width *3 / 4, height / 8);
+        descriptionTree = new JLabel("Please select a text file for tree of file");
+        descriptionTree.setLocation(width / 20, height * 5 / 14);
+        descriptionTree.setSize(width * 3 / 4, height / 8);
         descriptionTree.setFont(new Font("/fonts/SegeoPrint", Font.BOLD, 10));
         descriptionTree.setForeground(Color.BLACK);
 
         browsTree.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser() ;
+                JFileChooser fileChooser = new JFileChooser();
                 int returnValue = fileChooser.showOpenDialog(null);
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
                     selectedTreeFile = fileChooser.getSelectedFile();
@@ -80,8 +80,8 @@ public class DecodePanel extends JFrame {
             }
         });
 
-        decode = new JButton("Decode!") ;
-        decode.setLocation(width *5 / 7, height * 9 / 13);
+        decode = new JButton("Decode!");
+        decode.setLocation(width * 5 / 7, height * 9 / 13);
         decode.setSize(width / 4, height / 8);
         decode.setBackground(Color.LIGHT_GRAY);
         decode.setFont(new Font("/fonts/SegeoPrint", Font.BOLD, 12));
@@ -90,34 +90,24 @@ public class DecodePanel extends JFrame {
         decode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                File decodedFile = null  ;
-                HaffmanHandler handler = new HaffmanHandler(selectedFile , selectedTreeFile ) ;
+                HaffmanHandler handler = new HaffmanHandler(selectedFile, selectedTreeFile);
                 try {
-                    decodedFile = handler.decode() ;
-                    String s = "" ;
-                    JFileChooser chooser = new JFileChooser() ;
+                    String path = "";
+                    JFileChooser chooser = new JFileChooser();
                     chooser.setDialogTitle("Save as ...");
                     chooser.setFileSelectionMode(JFileChooser.SAVE_DIALOG);
                     int returnValue = chooser.showSaveDialog(null);
                     if (returnValue == JFileChooser.APPROVE_OPTION) {
-                        s = chooser.getSelectedFile().getPath() ;
+                        path = chooser.getSelectedFile().getPath();
                     }
 
-                    s += "/" + decodedFile.getName() ;
-                    File temp = new File(s) ;
-                    try {
-                        FileWriter writer = new FileWriter(temp) ;
-                        for( String line : Files.readAllLines( Paths.get(decodedFile.getPath()) ) ){
-                            writer.write(line);
-                        }
-                        writer.close();
+                    path += "/HaffmanDecoded" + selectedFile.getName();
+                    System.out.println( path ) ;
+                    handler.decode(path);
 
-                        parent.setVisible(true);
-                        dispose();
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                } catch (FileNotFoundException e1) {
+                    parent.setVisible(true);
+                    dispose();
+                } catch (IOException e1) {
                     e1.printStackTrace();
                 }
             }
@@ -126,26 +116,26 @@ public class DecodePanel extends JFrame {
 
     private void setEncodedPanel() {
         brows = new JButton("Brows");
-        brows.setLocation(width *5 / 7, height * 3 / 13);
+        brows.setLocation(width * 5 / 7, height * 3 / 13);
         brows.setSize(width / 4, height / 8);
         brows.setBackground(Color.LIGHT_GRAY);
         brows.setFont(new Font("/fonts/SegeoPrint", Font.BOLD, 12));
         brows.setForeground(Color.WHITE);
 
-        filePath = new JTextField() ;
-        filePath.setLocation(width / 20 , height * 3 / 13);
-        filePath.setSize(width * 3 / 5 , height / 8);
+        filePath = new JTextField();
+        filePath.setLocation(width / 20, height * 3 / 13);
+        filePath.setSize(width * 3 / 5, height / 8);
 
-        description = new JLabel("Please select a text file for decoding") ;
-        description.setLocation(width  / 20, height * 2 / 14);
-        description.setSize(width *3 / 4, height / 8);
+        description = new JLabel("Please select a text file for decoding");
+        description.setLocation(width / 20, height * 2 / 14);
+        description.setSize(width * 3 / 4, height / 8);
         description.setFont(new Font("/fonts/SegeoPrint", Font.BOLD, 10));
         description.setForeground(Color.BLACK);
 
         brows.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser() ;
+                JFileChooser fileChooser = new JFileChooser();
                 int returnValue = fileChooser.showOpenDialog(null);
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
                     selectedFile = fileChooser.getSelectedFile();
@@ -155,7 +145,7 @@ public class DecodePanel extends JFrame {
         });
     }
 
-    private void initialize(){
+    private void initialize() {
         this.setUndecorated(true);
         //this.setShape(new RoundRectangle2D.Double(0,0, widthScreen/4, heightScreen/2, 40, 40));
         this.setSize(widthScreen / 4, heightScreen / 3);
@@ -186,12 +176,12 @@ public class DecodePanel extends JFrame {
     private void AddComponentsToFrame() {
         getContentPane().add(title);
         getContentPane().add(brows);
-        getContentPane().add(filePath) ;
-        getContentPane().add(description) ;
+        getContentPane().add(filePath);
+        getContentPane().add(description);
         getContentPane().add(browsTree);
-        getContentPane().add(filePathTree) ;
-        getContentPane().add(descriptionTree) ;
-        getContentPane().add(decode) ;
+        getContentPane().add(filePathTree);
+        getContentPane().add(descriptionTree);
+        getContentPane().add(decode);
 
     }
 
@@ -295,7 +285,7 @@ public class DecodePanel extends JFrame {
     }
 
     private void setTitle() {
-        title = new JLabel("Haffman Decoding" , JLabel.CENTER);
+        title = new JLabel("Haffman Decoding", JLabel.CENTER);
         title.setLocation(0, 0);
         title.setSize(width, height / 6);
         title.setForeground(Color.BLACK);

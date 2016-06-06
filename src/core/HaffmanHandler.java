@@ -76,16 +76,14 @@ public class HaffmanHandler {
         }
     }
 
-    public File decode() throws FileNotFoundException {
+    public File decode(String pathForFile) throws FileNotFoundException {
         if (codes == null) {
             throw new FileNotFoundException("No tree file founded");
         } else {
             if (decodedFile != null) {
                 return decodedFile;
             } else {
-                String s = "HaffmanDecoded";
-                s += encodedFile.getName();
-                decodedFile = new File("decodedFile/" + s);
+                decodedFile = new File(pathForFile);
                 String content = getContentFromFile(encodedFile);
                 String temp = "";
                 try {
